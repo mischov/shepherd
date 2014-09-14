@@ -73,7 +73,7 @@ It is not recommended to use Shepherd in production.
 
 ## Quickstart
 
-The workflows in shepherd/ring and their [example usage]() would be a good starting place until I can get a proper quickstart together.
+The [workflows](https://github.com/mischov/shepherd/tree/master/ring/src/shepherd/ring/workflow) in shepherd/ring and the [examples](https://github.com/mischov/shepherd-examples) would be a good starting place until I can get a proper quickstart together.
 
 [**Back To Top ⇧**](#contents) 
 
