@@ -9,4 +9,7 @@
 
                  ;; Hashing
                  [crypto-password "0.1.3"]
-                 [pandect "0.3.4"]])
+                 [pandect "0.3.4"]]
+
+  :source-paths ["src/clj"]
+  :java-source-paths ["src/java"])

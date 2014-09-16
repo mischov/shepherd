@@ -2,15 +2,21 @@
   (:require [shepherd.protocols :as shepherd]))
 
 
+(defn parse-identity
+  [request]
+
+  (get request :identity))
+
+
 (defrecord SessionWorkflow
-  [authr unauthr]
+  [unauthenticated unauthorized]
 
   shepherd/Authentication
   (parse-credentials
     [_ request]
     (get-in request [:session :identity]))
 
-  (authenticate
+  (authenticate-credentials
     [_ request credentials]
     (if credentials
       (assoc request :identity credentials)
@@ -19,24 +25,24 @@
   shepherd/Authorization
   (parse-identity
     [_ request]
-    (get request :identity))
+    (parse-identity request))
 
-  (authorized?
+  (handle-unauthenticated
+    [_ request]
+    (if unauthenticated
+      (unauthenticated request)
+      {:status 401
+       :body "Unauthorized."}))
+
+  (handle-unauthorized
     [_ request identity]
-    (when authr (authr request identity)))
-
-  (unauthorized
-    [_ request identity]
-    (if unauthr
-      (unauthr request identity)
-      (if identity
-        {:status 403
-         :body "Permission denied."}
-        {:status 401
-         :body "Unauthorized."}))))
+    (if unauthorized
+      (unauthorized request identity)
+      {:status 403
+       :body "Permission denied."})))
 
 
-(defn create-session-workflow
-  [{:keys [authr unauthr] :as init}]
+(defn session-workflow
+  [{:keys [unauthenticated unauthorized] :as init}]
 
   (map->SessionWorkflow init))

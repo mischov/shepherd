@@ -7,7 +7,7 @@
   (parse-credentials [_ request]
     "Parse and return credentials from request.")
   
-  (authenticate [_ request credentials]
+  (authenticate-credentials [_ request credentials]
     "Attempt to authenticate the credentials parsed
      from the request.
 
@@ -28,13 +28,12 @@
      request. If one of these facts is not true,
      parse-identity will need to be implemented by your
      workflow.")
+
+  (handle-unauthenticated [_ request]
+    "Handle request that are unauthenticated and unauthorized.")
   
-  (authorized? [_ request id]
-    "Attempt to authorize the identity parsed
-     from the request.")
-  
-  (unauthorized [_ request id]
-    "Handle unauthorized requests."))
+  (handle-unauthorized [_ request id]
+    "Handle requests that are authenticated but unauthorized."))
 
 
 ;; Safe (non-authorizing) default implementations.
@@ -51,7 +50,7 @@
   (parse-credentials [_ _]
     nil)
 
-  (authenticate [_ request _]
+  (authenticate-credentials [_ request _]
     request))
 
 
@@ -60,8 +59,8 @@
   (parse-identity [_ request]
     (get request :identity))
 
-  (authorized? [_ _]
-    false)
+  (handle-unauthenticated [_ _]
+    nil)
 
   (handle-unauthorized [_ _ _]
     nil))

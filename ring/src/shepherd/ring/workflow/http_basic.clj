@@ -13,17 +13,23 @@
       {:username username :password password})))
 
 
+(defn parse-identity
+  [request]
+  
+  (get request :identity))
+
+
 (defrecord HttpBasicWorkflow
-  [realm authn authr unauthr]
+  [realm authenticate unauthenticated unauthorized]
 
   shepherd/Authentication
   (parse-credentials
     [_ request]
     (parse-http-basic-credentials request))
 
-  (authenticate
+  (authenticate-credentials
     [_ request credentials]
-    (let [id (when authn (authn credentials))]
+    (let [id (when authenticate (authenticate credentials))]
       (if id
         (assoc request :identity id)
         request)))
@@ -31,25 +37,26 @@
   shepherd/Authorization
   (parse-identity
     [_ request]
-    (get request :identity))
+    (parse-identity request))
   
-  (authorized?
+  (handle-unauthenticated
+    [_ request]
+    (if unauthenticated
+      (unauthenticated request)
+      {:status 401
+       :headers {"WWW-Authenticate" (str "Basic realm=\"" realm "\"")}
+       :body "Unauthorized."}))
+
+  (handle-unauthorized
     [_ request identity]
-    (when authr (authr request identity)))
-
-  (unauthorized
-    [_ request identity]
-    (if unauthr
-      (unauthr request identity realm)
-      (if identity
-        {:status 403
-         :body "Permission denied."}
-        {:status 401
-         :headers {"WWW-Authenticate" (str "Basic realm=\"" realm "\"")}
-         :body "Unauthorized."}))))
+    (if unauthorized
+      (unauthorized request identity)
+      {:status 403
+       :body "Permission denied."})))
 
 
-(defn create-http-basic-workflow
-  [{:keys [realm authn authr unauthr] :or {realm "Secured"} :as init}]
+(defn http-basic-workflow
+  [{:keys [realm authenticate unauthenticated unauthorized]
+    :or {realm "Secured"} :as init}]
 
   (map->HttpBasicWorkflow init))
