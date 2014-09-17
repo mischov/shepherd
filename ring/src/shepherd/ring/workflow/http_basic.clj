@@ -22,23 +22,23 @@
 (defrecord HttpBasicWorkflow
   [realm authenticate unauthenticated unauthorized]
 
+  shepherd/Identity
+  (parse-identity
+    [_ request]
+    (parse-identity request))
+
   shepherd/Authentication
   (parse-credentials
     [_ request]
     (parse-http-basic-credentials request))
 
-  (authenticate-credentials
+  (authenticate-request
     [_ request credentials]
-    (let [id (when authenticate (authenticate credentials))]
-      (if id
-        (assoc request :identity id)
-        request)))
+    (if-let [id (when authenticate (authenticate credentials))]
+      (assoc request :identity id)
+      request))
 
   shepherd/Authorization
-  (parse-identity
-    [_ request]
-    (parse-identity request))
-  
   (handle-unauthenticated
     [_ request]
     (if unauthenticated
@@ -52,6 +52,7 @@
     (if unauthorized
       (unauthorized request identity)
       {:status 403
+       :headers {}
        :body "Permission denied."})))
 
 

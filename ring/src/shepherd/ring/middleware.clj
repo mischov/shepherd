@@ -9,11 +9,13 @@
   [handler workflow]
 
   (fn [request]
-    (let [creds (shepherd/parse-credentials workflow request)]
-      (if creds
-        (let [req (shepherd/authenticate-credentials workflow request creds)]
-          (handler req))
-        (handler request)))))
+    (if (shepherd/parse-identity workflow request)
+      (handler request)
+      (let [creds (shepherd/parse-credentials workflow request)]
+        (if-not creds
+          (handler request)
+          (let [req (shepherd/authenticate-request workflow request creds)]
+            (handler req)))))))
 
 
 (defn wrap-authorization

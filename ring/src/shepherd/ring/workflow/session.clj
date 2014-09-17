@@ -11,27 +11,27 @@
 (defrecord SessionWorkflow
   [unauthenticated unauthorized]
 
+  shepherd/Identity
+  (parse-identity
+    [_ request]
+    (parse-identity request))
+
   shepherd/Authentication
   (parse-credentials
     [_ request]
     (get-in request [:session :identity]))
 
-  (authenticate-credentials
+  (authenticate-request
     [_ request credentials]
-    (if credentials
-      (assoc request :identity credentials)
-      request))
+    (assoc request :identity credentials))
 
   shepherd/Authorization
-  (parse-identity
-    [_ request]
-    (parse-identity request))
-
   (handle-unauthenticated
     [_ request]
     (if unauthenticated
       (unauthenticated request)
       {:status 401
+       :headers {}
        :body "Unauthorized."}))
 
   (handle-unauthorized
@@ -39,10 +39,14 @@
     (if unauthorized
       (unauthorized request identity)
       {:status 403
+       :headers {}
        :body "Permission denied."})))
 
 
 (defn session-workflow
+  "Requires additional middleware:
+
+     ring.middleware.session."
   [{:keys [unauthenticated unauthorized] :as init}]
 
   (map->SessionWorkflow init))
