@@ -38,13 +38,13 @@ Shepherd currently features:
 To install one of the above libraries (shepherd/core for example), add the following dependency to your `project.clj` file:
 
 ```clojure
-[shepherd/core "0.0.1"]
+[shepherd/core "0.0.2"]
 ```
 
 To install all of the Shepherd libraries, add:
 
 ```clojure
-[shepherd "0.0.1"]
+[shepherd "0.0.2"]
 ```
 
 [**Back To Top ⇧**](#contents)

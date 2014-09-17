@@ -1,4 +1,4 @@
-(defproject shepherd/core "0.0.1"
+(defproject shepherd/core "0.0.2"
   :description "Shepherd core functionality."
   :url "https://github.com/mischov/shepherd"
   :scm {:dir ".."}
