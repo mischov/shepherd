@@ -20,6 +20,7 @@ Shepherd currently features:
 
 - Pashword hashing and comparison withBCrypt, SCrypt, and PBKDF2.
 - Hashing with MD5, SHA512, and various other algorithms.
+- HMACing with those same hashing algorithms.
 - Base64 and Hex encoding and decoding.
 - Protocols for Authorization and Authentication workflows.
 - Middleware and basic/example implementations of workflows for Ring apps.
@@ -81,8 +82,7 @@ The [workflows](https://github.com/mischov/shepherd/tree/master/ring/src/shepher
 
 Shepherd is still very much being implemented. Some upcoming features may include, but are certainly not limited to:
 
-- Documentation and Tutorials (by which a library lives or dies)
-- HMAC Functions
+- Documentation and Tutorials (by which a library lives or dies).
 - More Ring workflows for common functionality like Oauth.
 - (Possibly) Allowing multiple workflows.
 - (Possibly) Component workflows.
